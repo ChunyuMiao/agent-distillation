@@ -45,7 +45,6 @@ cleanup() {
 
 # Ctrl-C 처리
 trap 'echo ""; echo "❌ Interrupted!"; cleanup; exit 1' SIGINT SIGTERM
-export VLLM_USE_V1=0
 
 # ===================================================== #
 # 0. Run retriever server (background)

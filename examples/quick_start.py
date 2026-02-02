@@ -35,10 +35,12 @@ def get_user_input():
     return user_input.strip() or default_question
 
 def setup_agent():
+    # `VLLMServerModel` connects to an already-running OpenAI-compatible server (e.g. vLLM).
+    # By default we assume a local vLLM server started by scripts/inference/serve_slm_no_retriever.sh.
     model = VLLMServerModel(
         model_id="Qwen/Qwen2.5-1.5B-Instruct",
-        api_base="http://0.0.0.0:8000/v1",
-        api_key="token-abc",
+        api_base=os.getenv("VLLM_API_BASE", "http://127.0.0.1:8000/v1"),
+        api_key=os.getenv("VLLM_API_KEY", "token-abc"),
         lora_name="finetune",
         max_tokens=1024,
         n=2, temperature=0.4 # for SAG

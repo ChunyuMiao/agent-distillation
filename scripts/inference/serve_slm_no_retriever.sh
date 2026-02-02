@@ -22,7 +22,6 @@ cleanup() {
 
 # Trap Ctrl+C
 trap 'echo ""; echo "❌ Interrupted!"; cleanup; exit 1' SIGINT SIGTERM
-export VLLM_USE_V1=0
 
 echo "🚀 Launching vLLM model in foreground on all GPUs..."
 CMD="python serve_vllm.py \

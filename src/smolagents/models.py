@@ -407,11 +407,21 @@ class Model:
         model_instance.last_output_token_count = model_dictionary.pop("last_output_token_count", None)
         return model_instance
 
+_VLLM_IMPORT_ERROR: Optional[BaseException] = None
 try:
+    # vLLM is an optional dependency. Importing it at module import time is convenient for
+    # type/arg plumbing, but we must be resilient to *runtime* import failures coming from
+    # version conflicts (e.g. vllm <-> transformers) which can raise non-ImportError
+    # exceptions.
     from vllm import SamplingParams
     from vllm.lora.request import LoRARequest
 except ImportError:
-    pass
+    SamplingParams = None  # type: ignore[assignment]
+    LoRARequest = None  # type: ignore[assignment]
+except Exception as e:  # noqa: BLE001
+    SamplingParams = None  # type: ignore[assignment]
+    LoRARequest = None  # type: ignore[assignment]
+    _VLLM_IMPORT_ERROR = e
 
 class VLLMModel(Model):
     """Model to use [vLLM](https://docs.vllm.ai/) for fast LLM inference and serving.
@@ -428,6 +438,13 @@ class VLLMModel(Model):
         local_device_id: str = -1,
         **kwargs
     ):
+        if _VLLM_IMPORT_ERROR is not None:
+            raise RuntimeError(
+                "Detected an installed 'vllm' package, but importing it failed. "
+                "This is usually caused by a version conflict (commonly between "
+                "'vllm' and 'transformers'). Please upgrade vllm or pin transformers "
+                "to a compatible version."
+            ) from _VLLM_IMPORT_ERROR
         if not _is_package_available("vllm"):
             raise ModuleNotFoundError("Please install 'vllm' extra to use VLLMModel: `pip install 'smolagents[vllm]'`")
 

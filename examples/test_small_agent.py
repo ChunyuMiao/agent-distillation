@@ -9,8 +9,8 @@ from smolagents import (
 # Setup the VLLM local model
 model = VLLMServerModel(
     model_id="Qwen/Qwen2.5-1.5B-Instruct",
-    api_base="http://0.0.0.0:8000/v1",
-    api_key="token-abc",
+    api_base=os.getenv("VLLM_API_BASE", "http://127.0.0.1:8000/v1"),
+    api_key=os.getenv("VLLM_API_KEY", "token-abc"),
     lora_name="finetune",
     max_tokens=1024,
     n=4, temperature=0.4 # for SAG

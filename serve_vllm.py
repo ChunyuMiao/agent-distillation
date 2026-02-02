@@ -84,8 +84,30 @@ def main():
         type=int,
         help="maximum lora rank"
     )
+    parser.add_argument(
+        "--attention-backend",
+        type=str,
+        default=None,
+        help="Attention backend to use (e.g. FLASH_ATTN, FLASHINFER, TRITON_ATTN). "
+             "Can also be set via env var VLLM_ATTENTION_BACKEND."
+    )
 
     args = parser.parse_args()
+
+    # Allow overriding via env var (useful for new GPUs / driver combos).
+    attention_backend = args.attention_backend or os.getenv("VLLM_ATTENTION_BACKEND")
+    if attention_backend is None:
+        # Best-effort auto-detection: Blackwell GPUs (sm_120) may have issues with
+        # some prebuilt FlashAttention PTX/toolchain combos. Triton is usually the
+        # most portable fallback.
+        try:
+            import torch
+            if torch.cuda.is_available():
+                major, minor = torch.cuda.get_device_capability()
+                if major >= 12:
+                    attention_backend = "TRITON_ATTN"
+        except Exception:
+            pass
 
     # Build the command
     cmd = ["vllm", "serve"]
@@ -114,6 +136,8 @@ def main():
         cmd.extend(["--enable-lora", "--lora-modules", str(args.lora_modules)])
     if args.max_lora_rank:
         cmd.extend(["--max-lora-rank", str(args.max_lora_rank)])
+    if attention_backend:
+        cmd.extend(["--attention-backend", str(attention_backend)])
 
     # Print the command that will be executed
     print("Executing command:", " ".join(cmd))

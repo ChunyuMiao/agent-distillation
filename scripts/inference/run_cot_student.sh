@@ -36,7 +36,6 @@ cleanup() {
 
 # Ctrl-C
 trap 'echo ""; echo "❌ Interrupted!"; cleanup; exit 1' SIGINT SIGTERM
-export VLLM_USE_V1=0
 
 # 0. run retriever as background if
 

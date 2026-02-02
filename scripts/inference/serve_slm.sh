@@ -25,7 +25,6 @@ cleanup() {
 
 # Trap Ctrl+C
 trap 'echo ""; echo "❌ Interrupted!"; cleanup; exit 1' SIGINT SIGTERM
-export VLLM_USE_V1=0
 
 echo "🔍 Launching retriever in background..."
 # Conda shell hook (MUST be before activate)

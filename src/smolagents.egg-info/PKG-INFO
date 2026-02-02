@@ -1,3 +1,90 @@
+Metadata-Version: 2.4
+Name: smolagents
+Version: 1.13.0.dev0
+Summary: 🤗 smolagents: a barebones library for agents. Agents write python code to call tools or orchestrate other agents.
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: huggingface-hub>=0.28.0
+Requires-Dist: requests>=2.32.3
+Requires-Dist: rich>=13.9.4
+Requires-Dist: jinja2>=3.1.4
+Requires-Dist: pillow>=11.0.0
+Requires-Dist: markdownify>=0.14.1
+Requires-Dist: duckduckgo-search>=6.3.7
+Requires-Dist: python-dotenv
+Provides-Extra: distill
+Requires-Dist: torch; extra == "distill"
+Requires-Dist: openai>=1.58.1; extra == "distill"
+Requires-Dist: vllm==0.9.1; extra == "distill"
+Requires-Dist: trl==0.19.1; extra == "distill"
+Requires-Dist: numpy>=1.21.2; extra == "distill"
+Requires-Dist: rich; extra == "distill"
+Requires-Dist: peft; extra == "distill"
+Requires-Dist: word2number; extra == "distill"
+Requires-Dist: matplotlib; extra == "distill"
+Requires-Dist: seaborn; extra == "distill"
+Requires-Dist: sympy==1.13.3; extra == "distill"
+Requires-Dist: antlr4-python3-runtime==4.11.1; extra == "distill"
+Requires-Dist: Pebble; extra == "distill"
+Requires-Dist: timeout-decorator; extra == "distill"
+Provides-Extra: torch
+Requires-Dist: torch; extra == "torch"
+Requires-Dist: torchvision; extra == "torch"
+Requires-Dist: numpy>=1.21.2; extra == "torch"
+Provides-Extra: audio
+Requires-Dist: soundfile; extra == "audio"
+Requires-Dist: smolagents[torch]; extra == "audio"
+Provides-Extra: docker
+Requires-Dist: docker>=7.1.0; extra == "docker"
+Requires-Dist: websocket-client; extra == "docker"
+Provides-Extra: e2b
+Requires-Dist: e2b-code-interpreter>=1.0.3; extra == "e2b"
+Requires-Dist: python-dotenv>=1.0.1; extra == "e2b"
+Provides-Extra: gradio
+Requires-Dist: gradio>=5.13.2; extra == "gradio"
+Provides-Extra: litellm
+Requires-Dist: litellm>=1.60.2; extra == "litellm"
+Provides-Extra: mcp
+Requires-Dist: mcpadapt>=0.0.15; extra == "mcp"
+Requires-Dist: mcp; extra == "mcp"
+Provides-Extra: mlx-lm
+Requires-Dist: mlx-lm; extra == "mlx-lm"
+Provides-Extra: openai
+Requires-Dist: openai>=1.58.1; extra == "openai"
+Provides-Extra: telemetry
+Requires-Dist: arize-phoenix; extra == "telemetry"
+Requires-Dist: opentelemetry-sdk; extra == "telemetry"
+Requires-Dist: opentelemetry-exporter-otlp; extra == "telemetry"
+Requires-Dist: openinference-instrumentation-smolagents>=0.1.4; extra == "telemetry"
+Provides-Extra: transformers
+Requires-Dist: accelerate; extra == "transformers"
+Requires-Dist: transformers>=4.0.0; extra == "transformers"
+Requires-Dist: smolagents[torch]; extra == "transformers"
+Provides-Extra: vision
+Requires-Dist: helium; extra == "vision"
+Requires-Dist: selenium; extra == "vision"
+Provides-Extra: vllm
+Requires-Dist: vllm; extra == "vllm"
+Requires-Dist: torch; extra == "vllm"
+Provides-Extra: all
+Requires-Dist: smolagents[audio,docker,e2b,gradio,litellm,mcp,mlx-lm,openai,telemetry,transformers,vision]; extra == "all"
+Provides-Extra: quality
+Requires-Dist: ruff>=0.9.0; extra == "quality"
+Provides-Extra: test
+Requires-Dist: ipython>=8.31.0; extra == "test"
+Requires-Dist: pandas>=2.2.3; extra == "test"
+Requires-Dist: pytest>=8.1.0; extra == "test"
+Requires-Dist: pytest-datadir; extra == "test"
+Requires-Dist: python-dotenv>=1.0.1; extra == "test"
+Requires-Dist: smolagents[all]; extra == "test"
+Requires-Dist: rank-bm25; extra == "test"
+Requires-Dist: Wikipedia-API>=0.8.1; extra == "test"
+Provides-Extra: dev
+Requires-Dist: smolagents[quality,test]; extra == "dev"
+Requires-Dist: sqlalchemy; extra == "dev"
+Dynamic: license-file
+
 # Agent Distillation
 
 <p align="center">
@@ -99,23 +186,6 @@ bash scripts/inference/serve_slm_no_retriever.sh
 python examples/quick_start.py
 ```
 You can now type in any question or task you'd like to test with the *distilled* agent.
-
-> Important: `serve_slm_no_retriever.sh` starts a local **vLLM OpenAI-compatible server** (default: `http://127.0.0.1:8000/v1`) and runs in the foreground.
-> Keep it running, and only then run `examples/quick_start.py` in another terminal. If you see `Connection refused`, the server is not running (or the port/host is wrong).
->
-> Quick checks:
-> ```bash
-> ss -ltnp | grep ':8000' || true
-> curl -s http://127.0.0.1:8000/v1/models | head
-> ```
->
-> If the vLLM server fails to start on very new GPUs (e.g. Blackwell / `sm_120`) with errors mentioning PTX/toolchain (e.g.
-> `CUDA error: the provided PTX was compiled with an unsupported toolchain`),
-> force a more portable attention backend:
-> ```bash
-> export VLLM_ATTENTION_BACKEND=TRITON_ATTN
-> bash scripts/inference/serve_slm_no_retriever.sh
-> ```
 
 > ⚠️ Note: This agent was trained using a Wikipedia-based retriever. Results may be less accurate when using a general search engine.
 

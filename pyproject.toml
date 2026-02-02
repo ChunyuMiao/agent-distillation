@@ -25,7 +25,9 @@ dependencies = [
 distill = [
   "torch",
   "openai>=1.58.1",
-  "vllm==0.9.1",
+  # vLLM is used for serving the local SLM via an OpenAI-compatible endpoint.
+  # We pin to a recent version to support newer GPUs (e.g. Blackwell / sm_120).
+  "vllm==0.15.0",
   "trl==0.19.1",
   "numpy>=1.21.2",
   "rich",
@@ -33,7 +35,7 @@ distill = [
   "word2number",
   "matplotlib",
   "seaborn",
-  "sympy==1.12",
+  "sympy==1.13.3",
   "antlr4-python3-runtime==4.11.1", # ! The version needs to be compatible with sympy.
   "Pebble",
   "timeout-decorator"
